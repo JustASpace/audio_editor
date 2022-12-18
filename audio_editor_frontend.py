@@ -12,7 +12,7 @@ class AudioEditorFrontEnd:
         self.font_size = 20
         self.FPS = 60
         self.backward = (189, 155, 207)
-        self.backend = AudioEditorBackEnd
+        self.backend = AudioEditorBackEnd()
         self.input_boxes = dict()
         self.texts = dict()
         self.buttons = dict()
