@@ -68,6 +68,10 @@ class AudioEditorFrontEnd:
                                          int(self.input_boxes["cut_to_input"].text))
                     elif button == 'reverse_button':
                         self.backend.reverse(self.input_boxes["song_input"].text)
+                    elif button == 'concat_button':
+                        song1, song2 = self.input_boxes["song_input"].text.split('+')
+                        self.backend.concat(song1, song2)
+
     def create_texts(self):
         font = pygame.font.SysFont(self.font, self.font_size, bold=True)
         self.texts['input_text'] = font.render('Введите название файла:', True, 'white')
@@ -77,6 +81,7 @@ class AudioEditorFrontEnd:
         self.texts['cut_from_text'] = font.render('Обрезать, начиная с', True, 'white')
         self.texts['cut_to_text'] = font.render('секунды, длительность в', True, 'white')
         self.texts['reverse_text'] = font.render('Обратить', True, 'white')
+        self.texts['concat_text'] = font.render('Объединить два файла (В названии: "1.mp3+2.wav")', True, 'white')
 
     def create_input_boxes(self):
         self.input_boxes["song_input"] = (InputBox(300, 15, 100, 32))
@@ -90,6 +95,7 @@ class AudioEditorFrontEnd:
         self.buttons['change_volume_button'] = ButtonBox(490, 137, 30, 30)
         self.buttons['cut_button'] = ButtonBox(595, 178, 30, 30)
         self.buttons['reverse_button'] = ButtonBox(128, 222, 30, 30)
+        self.buttons['concat_button'] = ButtonBox(600, 260, 30, 30)
 
     def draw_texts(self, screen):
         screen.blit(self.texts['input_text'], (20, 20))
@@ -99,6 +105,7 @@ class AudioEditorFrontEnd:
         screen.blit(self.texts['cut_from_text'], (20, 180))
         screen.blit(self.texts['cut_to_text'], (20 + self.texts['cut_from_text'].get_width() + 40, 180))
         screen.blit(self.texts['reverse_text'], (20, 220))
+        screen.blit(self.texts['concat_text'], (20, 260))
 
     def draw_input_boxes(self, screen):
         for box in self.input_boxes.keys():

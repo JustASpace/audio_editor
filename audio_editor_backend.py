@@ -21,8 +21,8 @@ class AudioEditorBackEnd:
         song1, format1 = song1[:song1.rfind('.')], song1[song1.rfind('.') + 1:]
         song2, format2 = song2[:song2.rfind('.')], song2[song2.rfind('.') + 1:]
         if format2 != format1:
-            subprocess.Popen(f"ffmpeg -i {song1}.{format1} -i {song2}.{format2} -filter_complex 'concat=n=2:v=0:a=1[a]'"
-                             f" -map '[a]' -codec:a libmp3lame -b:a 256k {song1}+{song2}.mp3")
+            subprocess.Popen(f'ffmpeg -i {song1}.{format1} -i {song2}.{format2} -filter_complex "concat=n=2:v=0:a=1[a]" -map "[a]" '
+                             f'-codec:a libmp3lame -b:a 256k {song1}+{song2}.mp3')
             return
         subprocess.Popen(f'ffmpeg -i {song1}.{format1} -i {song2}.{format2} -filter_complex '
                          f'"[0:0][1:0]concat=n=2:v=0:a=1[out]" -map "[out]" {song1}+{song2}.{format1}')
@@ -30,3 +30,6 @@ class AudioEditorBackEnd:
     def change_volume(self, song: str, coef: float):
         song, format = song[:song.rfind('.')], song[song.rfind('.') + 1:]
         subprocess.Popen(f'ffmpeg -i {song}.{format} -af "volume={coef}" {song}_volume_changed_by_{coef}.{format}')
+
+au = AudioEditorBackEnd()
+au.concat("test.mp3", "test.wav")

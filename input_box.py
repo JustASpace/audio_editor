@@ -32,7 +32,6 @@ class InputBox:
                     self.text = ''
                 # elif event.key == pygame.K_BACKSPACE:
                 elif keys[pygame.K_BACKSPACE]:
-                    print(1)
                     self.text = self.text[:-1]
                 # elif (event.key == pygame.K_v) and (event.mod & pygame.KMOD_CTRL):
                 #     text = pygame.scrap.get(pygame.SCRAP_TEXT)
