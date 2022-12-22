@@ -30,6 +30,3 @@ class AudioEditorBackEnd:
     def change_volume(self, song: str, coef: float):
         song, format = song[:song.rfind('.')], song[song.rfind('.') + 1:]
         subprocess.Popen(f'ffmpeg -i {song}.{format} -af "volume={coef}" {song}_volume_changed_by_{coef}.{format}')
-
-au = AudioEditorBackEnd()
-au.concat("test.mp3", "test.wav")
