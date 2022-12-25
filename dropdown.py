@@ -17,7 +17,7 @@ class DropDown():
 
     def draw(self, surf):
         pg.draw.rect(surf, self.color_menu[self.menu_active], self.rect, 0)
-        msg = self.font.render(self.main, 1, (0, 0, 0))
+        msg = self.font.render(self.main, 1, "green")
         surf.blit(msg, msg.get_rect(center=self.rect.center))
 
         if self.draw_menu:

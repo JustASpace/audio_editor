@@ -3,8 +3,8 @@ import pygame
 
 pygame.init()
 
-COLOR_INACTIVE = pygame.Color(145, 118, 116)
-COLOR_ACTIVE = pygame.Color(0, 0, 0)
+COLOR_INACTIVE = pygame.Color(0, 0, 0)
+COLOR_ACTIVE = pygame.Color(90, 90, 180)
 FONT = pygame.font.Font(None, 26)
 
 
@@ -30,18 +30,11 @@ class InputBox:
             if self.active:
                 if event.key == pygame.K_RETURN:
                     self.text = ''
-                # elif event.key == pygame.K_BACKSPACE:
                 elif keys[pygame.K_BACKSPACE]:
                     self.text = self.text[:-1]
-                # elif (event.key == pygame.K_v) and (event.mod & pygame.KMOD_CTRL):
-                #     text = pygame.scrap.get(pygame.SCRAP_TEXT)
-                #     print(text)
-                #     if text:
-                #         self.text = text
-                #     else:
-                #         pass
                 else:
-                    self.text += event.unicode
+                    if len(self.text) < 5:
+                        self.text += event.unicode
                 self.txt_surface = FONT.render(self.text, True, self.color)
 
     def update(self):

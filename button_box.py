@@ -13,4 +13,4 @@ class ButtonBox:
         if self.rect.x <= a <= self.rect.x + self.rect.width and self.rect.y <= b <= self.rect.y + self.rect.height:
             pygame.draw.rect(screen, (180, 180, 180), self)
         else:
-            pygame.draw.rect(screen, (110, 110, 110), self)
+            pygame.draw.rect(screen, (0, 0, 0), self)
