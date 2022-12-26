@@ -1,16 +1,20 @@
+import os
 import tkinter.filedialog
+
 import pygame
 from pygame import mixer
-from input_box import InputBox
-from button_box import ButtonBox
+
 from audio_editor_backend import AudioEditorBackEnd
+from button_box import ButtonBox
 from dropdown import DropDown
+from input_box import InputBox
 
 
-def prompt_file():
+def prompt_file(start_directory=os.getcwd()):
     top = tkinter.Tk()
     top.withdraw()
-    file_name = tkinter.filedialog.askopenfilename(filetypes=(("Audio Files", ".mp3 .wav"),))
+    file_name = tkinter.filedialog.askopenfilename(initialdir=start_directory,
+                                                   filetypes=(("Audio Files", ".mp3 .wav"),))
     top.destroy()
     return file_name
 
@@ -21,12 +25,12 @@ class AudioEditorFrontEnd:
         self.height = 600
         self.font = "comicsansms"
         self.font_size = 20
-        self.FPS = 30
+        self.FPS = 60
         self.backward = (30, 46, 71)
         self.backend = AudioEditorBackEnd()
+        self.dropdown = None
         self.input_boxes = dict()
         self.texts = dict()
-        self.dropdown = None
         self.buttons = dict()
         self.current_audio_file = ''
         self.current_audio_file_path = ''
@@ -43,6 +47,7 @@ class AudioEditorFrontEnd:
     def start(self):
         pygame.init()
         mixer.init()
+        self.backend.create_temp_directory()
 
         screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Аудиоредактор')
@@ -70,6 +75,8 @@ class AudioEditorFrontEnd:
         for event in events:
             keys = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
+                mixer.music.unload()
+                self.backend.remove_temp_directory()
                 pygame.quit()
             # elif event.type == pygame.MOUSEMOTION:
             #     print(f"Position: {event.pos}")
@@ -89,15 +96,20 @@ class AudioEditorFrontEnd:
         if event.type == pygame.MOUSEBUTTONDOWN:
             for button in self.buttons.keys():
                 if self.buttons[button].rect.collidepoint(event.pos):
-                    if button == 'choose_file_button':
-                        file = prompt_file()
+                    font = pygame.font.SysFont(self.font, self.font_size, bold=True)
+
+                    if button == 'choose_file_button' or button == 'created_files_button':
+                        if button == 'created_files_button':
+                            file = prompt_file(self.backend.dirpath)
+                        else:
+                            file = prompt_file()
                         if file == '':
                             continue
                         self.current_audio_file_path = file
                         mixer.music.load(file)
                         self.current_audio_file = file[file.rfind("/") + 1:]
-                        font = pygame.font.SysFont(self.font, self.font_size, bold=True)
                         self.texts['current_audio_file'] = font.render(self.current_audio_file, True, 'green')
+
                     elif button == 'execute_button':
                         if self.dropdown.last_option == 0 or self.dropdown.last_option == 1:
                             self.option_to_command[self.dropdown.last_option](self.current_audio_file_path,
@@ -113,7 +125,7 @@ class AudioEditorFrontEnd:
                             print(self.audio_to_concat_path)
                             self.option_to_command[self.dropdown.last_option](self.current_audio_file_path,
                                                                               self.audio_to_concat_path)
-                    elif button == 'choose_file_to_concat_button':
+                    elif button == 'choose_file_to_concat_button' and self.dropdown.last_option == 4:
                         file = prompt_file()
                         if file == '':
                             continue
@@ -121,6 +133,13 @@ class AudioEditorFrontEnd:
                         self.audio_to_concat_path = file
                         font = pygame.font.SysFont(self.font, 14, bold=True)
                         self.texts['audio_to_concat'] = font.render(self.audio_to_concat, True, 'green')
+
+                    elif button == 'save_result_button':
+                        mixer.music.unload()
+                        self.current_audio_file = ''
+                        self.texts['current_audio_file'] = font.render(self.current_audio_file, True, 'green')
+                        self.backend.move_to_working_directory(os.getcwd())
+
                     if self.current_audio_file != '':
                         if button == 'play_button':
                             mixer.music.play()
@@ -142,11 +161,14 @@ class AudioEditorFrontEnd:
         self.texts['pause'] = font.render('Pause', True, 'green')
         self.texts['stop'] = font.render('Stop', True, 'green')
         self.texts['choose_file'] = font.render('Выберите файл', True, 'green')
+        self.texts['created_files'] = font.render('Посмотреть измененные файлы', True, 'green')
+        self.texts['created_files_description'] = font.render('(Так же можно выбрать для редактирования или удалить)', True, 'green')
+        self.texts['save_current_files_to'] = font.render('Сохранить результат', True, 'green')
 
         self.texts['coefficient'] = font.render('Коэффициент:', True, 'green')
+        self.texts['coefficient_accelerate'] = font.render('(Должен быть в пределах [0.5, 100])', True, 'green')
         self.texts['cut_1'] = font.render('C', True, 'green')
         self.texts['cut_2'] = font.render('секунды, длительность в', True, 'green')
-        self.texts['reverse_text'] = font.render('Обратить', True, 'green')
         self.texts['concat_text'] = font.render('Выберите файл для объединения', True, 'green')
         self.texts['execute'] = font.render('Выполнить', True, 'green')
 
@@ -170,6 +192,10 @@ class AudioEditorFrontEnd:
                                                 self.texts['stop'].get_height())
         self.buttons['choose_file_to_concat_button'] = ButtonBox(250, 130, self.texts['concat_text'].get_width(),
                                                                  self.texts['concat_text'].get_height())
+        self.buttons['created_files_button'] = ButtonBox(420, 530, self.texts['created_files'].get_width(),
+                                                                 self.texts['created_files'].get_height())
+        self.buttons['save_result_button'] = ButtonBox(420, 490, self.texts['save_current_files_to'].get_width(),
+                                                                 self.texts['save_current_files_to'].get_height())
 
     def create_dropdown(self):
         COLOR_INACTIVE = (0, 0, 0)
@@ -192,12 +218,17 @@ class AudioEditorFrontEnd:
         screen.blit(self.texts['pause'], (300, 40))
         screen.blit(self.texts['stop'], (370, 40))
         screen.blit(self.texts['execute'], (self.dropdown.rect.x + 620, self.dropdown.rect.y + 10))
+        screen.blit(self.texts['created_files'], (self.dropdown.rect.x + 380, self.dropdown.rect.y + 410))
+        screen.blit(self.texts['created_files_description'], (self.dropdown.rect.x + 145, self.dropdown.rect.y + 440))
+        screen.blit(self.texts['save_current_files_to'], (self.dropdown.rect.x + 380, self.dropdown.rect.y + 370))
 
         text_location = (self.dropdown.rect.x + 210, self.dropdown.rect.y + 10)
 
         if self.dropdown.last_option == -1:
             pass
         elif self.dropdown.last_option == 0 or self.dropdown.last_option == 1:
+            if self.dropdown.last_option == 0:
+                screen.blit(self.texts['coefficient_accelerate'], (250, 160))
             screen.blit(self.texts['coefficient'], text_location)
             self.input_boxes["coefficient"].update()
             self.input_boxes["coefficient"].draw(screen)
