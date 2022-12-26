@@ -4,10 +4,10 @@ import tkinter.filedialog
 import pygame
 from pygame import mixer
 
-from audio_editor_backend import AudioEditorBackEnd
-from button_box import ButtonBox
-from dropdown import DropDown
-from input_box import InputBox
+from backend.audio_editor_backend import AudioEditorBackEnd
+from frontend.GUI_elements.button_box import ButtonBox
+from frontend.GUI_elements.dropdown import DropDown
+from frontend.GUI_elements.input_box import InputBox
 
 
 def prompt_file(start_directory=os.getcwd()):
@@ -78,8 +78,6 @@ class AudioEditorFrontEnd:
                 mixer.music.unload()
                 self.backend.remove_temp_directory()
                 pygame.quit()
-            # elif event.type == pygame.MOUSEMOTION:
-            #     print(f"Position: {event.pos}")
             self.boxes_handle_event(event, keys)
             self.buttons_handle_event(event)
 
@@ -121,8 +119,6 @@ class AudioEditorFrontEnd:
                         elif self.dropdown.last_option == 3:
                             self.option_to_command[self.dropdown.last_option](self.current_audio_file_path)
                         elif self.dropdown.last_option == 4:
-                            print(self.current_audio_file_path)
-                            print(self.audio_to_concat_path)
                             self.option_to_command[self.dropdown.last_option](self.current_audio_file_path,
                                                                               self.audio_to_concat_path)
                     elif button == 'choose_file_to_concat_button' and self.dropdown.last_option == 4:

@@ -1,4 +1,4 @@
-from audio_editor_frontend import AudioEditorFrontEnd
+from frontend.audio_editor_frontend import AudioEditorFrontEnd
 
 
 def main():
