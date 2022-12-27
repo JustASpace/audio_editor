@@ -118,9 +118,11 @@ class AudioEditorFrontEnd:
                                                                               self.input_boxes['cut_2'].text)
                         elif self.dropdown.last_option == 3:
                             self.option_to_command[self.dropdown.last_option](self.current_audio_file_path)
-                        elif self.dropdown.last_option == 4:
+                        elif self.dropdown.last_option == 4 and self.current_audio_file != ''\
+                                and self.audio_to_concat != '':
                             self.option_to_command[self.dropdown.last_option](self.current_audio_file_path,
                                                                               self.audio_to_concat_path)
+
                     elif button == 'choose_file_to_concat_button' and self.dropdown.last_option == 4:
                         file = prompt_file()
                         if file == '':
@@ -133,6 +135,7 @@ class AudioEditorFrontEnd:
                     elif button == 'save_result_button':
                         mixer.music.unload()
                         self.current_audio_file = ''
+                        self.current_audio_file_path = ''
                         self.texts['current_audio_file'] = font.render(self.current_audio_file, True, 'green')
                         self.backend.move_to_working_directory(os.getcwd())
 

@@ -38,7 +38,6 @@ class AudioEditorBackEnd:
         if format2 != format1:
             subprocess.Popen(rf'ffmpeg -i {song1}.{format1} -i {song2}.{format2} -filter_complex "concat=n=2:v=0:a=1[a]" -map "[a]" '
                              rf'-codec:a libmp3lame -b:a 256k {self.dirpath}\{song_only1}+{song_only2}.mp3')
-            self.current_files.append(f'{song_only1}+{song_only2}.mp3')
             return
         subprocess.Popen(rf'ffmpeg -i {song1}.{format1} -i {song2}.{format2} -filter_complex '
                          rf'"[0:0][1:0]concat=n=2:v=0:a=1[out]" -map "[out]" {self.dirpath}\{song_only1}+{song_only2}.{format1}')
