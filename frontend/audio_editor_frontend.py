@@ -1,9 +1,8 @@
 import os
 import tkinter.filedialog
-
 import pygame
-from pygame import mixer
 
+from pygame import mixer
 from backend.audio_editor_backend import AudioEditorBackEnd
 from frontend.GUI_elements.button_box import ButtonBox
 from frontend.GUI_elements.dropdown import DropDown
