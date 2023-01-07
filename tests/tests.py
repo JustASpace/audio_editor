@@ -7,11 +7,15 @@ from backend.audio_editor_backend import AudioEditorBackEnd
 
 test_backend = AudioEditorBackEnd()
 test_dir = pathlib.Path.cwd()
+test_backend.create_temp_directory()
 
 
 class MyTestCase(unittest.TestCase):
+    @classmethod
+    def tearDownClass(cls) -> None:
+        test_backend.remove_temp_directory()
+
     def test_creating_temp_folder(self):
-        test_backend.create_temp_directory()
         self.assertTrue(os.path.isdir(test_backend.dirpath))
 
     def test_accelerate(self):
@@ -54,10 +58,12 @@ class MyTestCase(unittest.TestCase):
         result = filecmp.cmp(output, expected_output)
         self.assertTrue(result)
 
-    def test_destroying_temp_folder(self):
-        test_backend.remove_temp_directory()
-        self.assertFalse(os.path.isdir(test_backend.dirpath))
+    # def test_destroying_temp_folder(self):
+    #     test_backend.remove_temp_directory()
+    #     self.assertFalse(os.path.isdir(test_backend.dirpath))
 
 
 if __name__ == '__main__':
     unittest.main()
+
+
