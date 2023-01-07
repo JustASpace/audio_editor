@@ -23,7 +23,6 @@ class AudioEditorBackEnd:
     def accelerate(self, song: str, coef: float):
         song, format = song[:song.rfind('.')], song[song.rfind('.') + 1:]
         song_only = song[song.rfind('/') + 1:]
-        print(song)
         subprocess.Popen(rf'ffmpeg -i "{song}.{format}" -af atempo={coef} "{self.dirpath}\{song_only}_accelerated_by_{coef}.{format}"')
 
     def reverse(self, song: str):
