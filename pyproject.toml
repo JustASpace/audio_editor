@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "audio_editor"
+version = "1.0.0"
+description = ""
+authors = ["JustASpace"]
+readme = "readme.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+ffmpeg = "^1.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

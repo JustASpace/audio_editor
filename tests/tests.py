@@ -58,10 +58,6 @@ class MyTestCase(unittest.TestCase):
         result = filecmp.cmp(output, expected_output)
         self.assertTrue(result)
 
-    # def test_destroying_temp_folder(self):
-    #     test_backend.remove_temp_directory()
-    #     self.assertFalse(os.path.isdir(test_backend.dirpath))
-
 
 if __name__ == '__main__':
     unittest.main()
