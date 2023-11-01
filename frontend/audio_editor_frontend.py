@@ -174,8 +174,7 @@ class AudioEditorFrontEnd:
                             else:
                                 self.is_reversed = True
                                 self.current_time = mixer.music.get_pos() / 1000
-                                song, format = self.current_audio_file[:self.current_audio_file.rfind('.')], \
-                                               self.current_audio_file[self.current_audio_file.rfind('.') + 1:]
+                                song = self.current_audio_file[:self.current_audio_file.rfind('.')]
                                 mixer.music.load(rf'{self.backend.prog_dir}\{song}_reversed.mp3')
                                 mixer.music.play(0, self.full_play_time - self.current_time)
 
